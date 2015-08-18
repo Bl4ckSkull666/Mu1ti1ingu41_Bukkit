@@ -14,10 +14,10 @@ Second Step :
 
 Step Three :
 Load all messages in your Plugin with :
-- A simple BaseComponent[] --> ProxiedPlayer.sendMessage(Language.getMessage(YourPluginClass, Player UniqueId, Path in language file, Default message));
-- A simple BaseComponent[] with replaces --> ProxiedPlayer.sendMessage(Language.getMessage(YourPluginClass, Player UniqueId, Path in language file, Default message, String[] {"search1","search2","..."}, String[] {"replacewith1","replacewith2","replacewith3"));
-- Get a String Array from List --> String[] moreMessages = Language.getMessages(YourPluginClass, Player UniqueId, Path in language file);
-- Get The Configuration File --> Configuration language = Language.getMessageFile(YourPluginClass, Player UniqueId);
+- A simple BaseComponent[] --> ProxiedPlayer.sendMessage(Language.getMessage(YourPlugin, Player UniqueId, Path in language file, Default message));
+- A simple BaseComponent[] with replaces --> ProxiedPlayer.sendMessage(Language.getMessage(YourPlugin, Player UniqueId, Path in language file, Default message, String[] {"search1","search2","..."}, String[] {"replacewith1","replacewith2","replacewith3"));
+- Get a String Array from List --> String[] moreMessages = Language.getMessages(YourPlugin, Player UniqueId, Path in language file);
+- Get The Configuration File --> Configuration language = Language.getMessageFile(YourPlugin, Player UniqueId);
 
 
 

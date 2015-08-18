@@ -22,7 +22,7 @@ Load all messages in your Plugin with :
 
 
 If you want to give out the language of a player , you can get it by :
-- String myLang = UUIDLanguage.getPlayerLanguage(Player UniqueId);
+- String myLang = UUIDLanguages.getPlayerLanguage(Player UniqueId);
 
 
 How can i use Configuration Support?

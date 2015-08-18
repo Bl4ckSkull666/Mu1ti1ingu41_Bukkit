@@ -1,0 +1,13 @@
+short-language:
+  english: en
+  englisch: en
+  german: de
+  deutsch: de
+available-languages:
+  - de
+  - en
+default-language: en
+replace-languages:
+  at: de
+  ch: de
+  

@@ -1,0 +1,5 @@
+command:
+  need-language: 'Please select one of the following language :'
+  unknown-language: 'Cant find the wished language.'
+  changed-language: 'The Wished Language has been changed.'
+auto-language: 'Your Language is set to %language%. You can change it with /language.'

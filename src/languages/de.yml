@@ -1,0 +1,5 @@
+command:
+  need-language: 'Bitte waehle eine der folgenden Sprachen aus und setze diese hinter den Befehl.'
+  unknown-language: 'Konnte die von dir angegebene Sprache nicht finden.'
+  changed-language: 'Die Sprache wurde erfolgreich geaendert fuer einige Plugins.'
+auto-language: 'Deine Sprach wurde automatisch bestimmt zu %language%. Du kannst dieses aendern mit /sprache'

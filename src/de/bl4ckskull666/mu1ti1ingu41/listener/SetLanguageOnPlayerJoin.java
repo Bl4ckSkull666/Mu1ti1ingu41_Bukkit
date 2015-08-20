@@ -23,7 +23,7 @@ public class SetLanguageOnPlayerJoin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent e) {
         if(!UUIDLanguages._players.containsKey(e.getPlayer().getUniqueId())) {
             Language.setPlayerLanguage(e.getPlayer().getUniqueId());
-            e.getPlayer().sendMessage(Language.getMessage(Mu1ti1ingu41.name(),
+            e.getPlayer().sendMessage(Language.getMessage(Mu1ti1ingu41.getPlugin(),
                             e.getPlayer().getUniqueId(),
                             "auto-language",
                             "Set your language to %language%",

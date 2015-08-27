@@ -270,11 +270,11 @@ public final class Language extends Mu1ti1ingu41 {
                 InputStream in = pl.getResource(srcFile);
                 int c = -1;
                 File spLang = new File(lFold, name);
-                FileWriter fw = new FileWriter(spLang);
-                BufferedWriter bw = new BufferedWriter(fw);
+                OutputStream os = new FileOutputStream(spLang);
                 while((c = in.read()) != -1)
-                    bw.write(String.valueOf((char)c));
-                
+                    os.write(c);
+                os.close();
+                in.close();
                 if(name.lastIndexOf(".") > -1)
                     name = name.substring(0, name.lastIndexOf("."));
                 addFileToPlugin(spLang, pl.getDescription().getName().toLowerCase());

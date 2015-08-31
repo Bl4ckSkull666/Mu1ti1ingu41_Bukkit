@@ -7,11 +7,9 @@ package de.bl4ckskull666.mu1ti1ingu41;
 
 import com.maxmind.geoip.LookupService;
 import de.bl4ckskull666.mu1ti1ingu41.utils.ResourceList;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

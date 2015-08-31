@@ -17,7 +17,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
  *
  * @author PapaHarni
  */
-public class SetLanguageOnPlayerJoin implements Listener {
+public class PlayerJoin implements Listener {
     
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerJoin(PlayerJoinEvent e) {

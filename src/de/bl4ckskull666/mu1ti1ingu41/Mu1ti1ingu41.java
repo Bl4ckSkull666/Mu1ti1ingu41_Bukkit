@@ -6,8 +6,12 @@
 package de.bl4ckskull666.mu1ti1ingu41;
 
 import de.bl4ckskull666.mu1ti1ingu41.commands.LanguageCommand;
-import de.bl4ckskull666.mu1ti1ingu41.listener.SetLanguageOnPlayerJoin;
+import de.bl4ckskull666.mu1ti1ingu41.listener.BungeePlayerJoin;
+import de.bl4ckskull666.mu1ti1ingu41.listener.PluginMessageReceiver;
+import de.bl4ckskull666.mu1ti1ingu41.listener.PlayerJoin;
 import java.util.UUID;
+import javax.activation.CommandMap;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -30,8 +34,15 @@ public class Mu1ti1ingu41 extends JavaPlugin {
 
         UUIDLanguages._players.put(UUID.fromString("00000000-0000-0000-0000-000000000000"), getConfig().getString("default-language", "en"));
         Language.loadLanguage();
-        getCommand("language").setExecutor(new LanguageCommand());
-        getServer().getPluginManager().registerEvents(new SetLanguageOnPlayerJoin(), this);
+        
+        if(getConfig().getBoolean("use-bungeecord", false) && Bukkit.getVersion().toLowerCase().contains("spigot")) {
+            getServer().getMessenger().registerOutgoingPluginChannel(this, "Mu1ti1ingu41");
+            getServer().getMessenger().registerIncomingPluginChannel(this, "Mu1ti1ingu41", new PluginMessageReceiver());
+            getServer().getPluginManager().registerEvents(new BungeePlayerJoin(), this);
+        } else {
+            getCommand("language").setExecutor(new LanguageCommand());
+            getServer().getPluginManager().registerEvents(new PlayerJoin(), this);
+        }
     }
     
     @Override

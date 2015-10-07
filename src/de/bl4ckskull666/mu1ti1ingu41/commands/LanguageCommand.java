@@ -9,6 +9,7 @@ import de.bl4ckskull666.mu1ti1ingu41.Language;
 import de.bl4ckskull666.mu1ti1ingu41.Mu1ti1ingu41;
 import de.bl4ckskull666.mu1ti1ingu41.UUIDLanguages;
 import java.util.UUID;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -35,6 +36,10 @@ public class LanguageCommand implements CommandExecutor {
             }
         }
         
+        if(Mu1ti1ingu41.getPlugin().getConfig().getBoolean("use-bungeecord", false) && Bukkit.getVersion().toLowerCase().contains("spigot")) {
+            return true;
+        }
+        
         if(!(s instanceof Player)) {
             s.sendMessage("This command can only run by a player.");
             return true;
@@ -45,7 +50,7 @@ public class LanguageCommand implements CommandExecutor {
             p.sendMessage(Language.getMessage(Mu1ti1ingu41.getPlugin(), p.getUniqueId(), "command.need-language", "Please select one of the following language :"));
             String ava = "";
             for(String str: Mu1ti1ingu41.getPlugin().getConfig().getConfigurationSection("short-language").getKeys(false))
-                ava += ava.isEmpty()?"§e":"§9, §e" + str;
+                ava += (ava.isEmpty()?"§e":"§9, §e") + str;
             p.sendMessage(ava);
             return true;
         }

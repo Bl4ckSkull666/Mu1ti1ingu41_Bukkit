@@ -7,6 +7,7 @@ package de.bl4ckskull666.mu1ti1ingu41.listener;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
+import de.bl4ckskull666.mu1ti1ingu41.Language;
 import de.bl4ckskull666.mu1ti1ingu41.UUIDLanguages;
 import java.util.UUID;
 import org.bukkit.entity.Player;
@@ -19,15 +20,20 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 public class PluginMessageReceiver implements PluginMessageListener {
     @Override
     public void onPluginMessageReceived(String c, Player p, byte[] m) {
-        if (!c.equalsIgnoreCase("Mu1ti1ingu41"))
+        if(!c.equalsIgnoreCase("BungeeCord"))
             return;
 
         ByteArrayDataInput in = ByteStreams.newDataInput(m);
         String sub = in.readUTF();
-        if(sub.equalsIgnoreCase("player")) {
+        if(!sub.equalsIgnoreCase("Mu1ti1ingu41"))
+            return;
+        
+        String sec = in.readUTF();
+        if(sec.equalsIgnoreCase("player")) {
             UUID uuid = UUID.fromString(in.readUTF());
             String lang = in.readUTF();
             UUIDLanguages._players.put(uuid, lang);
-        }
+        } else if(sec.equalsIgnoreCase("reload"))
+            Language.loadLanguage();
     }
 }

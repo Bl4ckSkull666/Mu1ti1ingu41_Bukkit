@@ -6,7 +6,6 @@
 package de.bl4ckskull666.mu1ti1ingu41;
 
 import de.bl4ckskull666.mu1ti1ingu41.commands.LanguageCommand;
-import de.bl4ckskull666.mu1ti1ingu41.listener.BungeePlayerJoin;
 import de.bl4ckskull666.mu1ti1ingu41.listener.PluginMessageReceiver;
 import de.bl4ckskull666.mu1ti1ingu41.listener.PlayerJoin;
 import java.util.UUID;
@@ -36,13 +35,11 @@ public class Mu1ti1ingu41 extends JavaPlugin {
         Language.loadLanguage();
         
         if(getConfig().getBoolean("use-bungeecord", false) && Bukkit.getVersion().toLowerCase().contains("spigot")) {
-            getServer().getMessenger().registerOutgoingPluginChannel(this, "Mu1ti1ingu41");
-            getServer().getMessenger().registerIncomingPluginChannel(this, "Mu1ti1ingu41", new PluginMessageReceiver());
-            getServer().getPluginManager().registerEvents(new BungeePlayerJoin(), this);
-        } else {
-            getCommand("language").setExecutor(new LanguageCommand());
-            getServer().getPluginManager().registerEvents(new PlayerJoin(), this);
+            getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+            getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new PluginMessageReceiver());
         }
+        getServer().getPluginManager().registerEvents(new PlayerJoin(), this);
+        getCommand("language").setExecutor(new LanguageCommand());
     }
     
     @Override

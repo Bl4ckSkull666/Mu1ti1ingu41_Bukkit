@@ -24,6 +24,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -172,6 +173,14 @@ public final class Language extends Mu1ti1ingu41 {
                 msg = msg.replaceAll(search[i], replace[i]);
         }
         return ChatColor.translateAlternateColorCodes('&', msg);
+    }
+    
+    public static void sendMessage(Plugin plugin, Player p, String path, String defMsg) {
+        p.sendMessage(getMessage(plugin, p.getUniqueId(), path, defMsg));
+    }
+    
+    public static void sendMessage(Plugin plugin, Player p, String path, String defMsg, String[] search, String[] replace) {
+        p.sendMessage(getMessage(plugin, p.getUniqueId(), path, defMsg, search, replace));
     }
     
     private static void saveMissingPath(File f, FileConfiguration fc, String path, String defMsg) {

@@ -74,8 +74,8 @@ public final class Language extends Mu1ti1ingu41 {
     
     private static void addFileToPlugin(File f, String plugin) {
         if(!_files.containsKey(plugin)) {
-            _files.put(plugin, new HashMap<>());
-            _languages.put(plugin, new HashMap<>());
+            _files.put(plugin, new HashMap<String, File>());
+            _languages.put(plugin, new HashMap<String, FileConfiguration>());
         }
         
         String name = f.getName();

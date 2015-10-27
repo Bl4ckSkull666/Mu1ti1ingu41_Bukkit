@@ -26,6 +26,9 @@ public class example extends JavaPlugin implements CommandExecutor {
     public void onEnable() {
         _plugin = this;
         getCommand("example").setExecutor(this);
+        
+        //Lets Implement and Check if all Default files of languages loaded by Mu1ti1ingu41
+        //Mu1ti1ingu41.loadExternalDefaultLanguage(Plugin, Folder of Default files in the Plugin);
         Mu1ti1ingu41.loadExternalDefaultLanguage(this, "languages");
     }
     

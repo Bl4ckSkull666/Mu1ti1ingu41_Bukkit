@@ -31,40 +31,46 @@ public class example extends JavaPlugin implements CommandExecutor {
     
     @Override
     public boolean onCommand(CommandSender s, Command c, String l, String[] a) {
+        //Need only if you want to execute it from console too
         UUID uuid = UUID.fromString("00000000-0000-0000-0000-000000000000");
         if(s instanceof Player)
             uuid = ((Player)s).getUniqueId();
         
+        //But this can be used only by player now.
+        if(!(s instanceof Player)) {
+            s.sendMessage(Language.getMessage(_plugin, uuid, "need-player", "This command must be execute by a Player."));
+            return true;
+        }
+        
+        Player p = (Player)s;
+        
         if(a.length > 0) {
             if(a[0].equalsIgnoreCase("me") && s instanceof Player) {
-                Player p = (Player)s;
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(p.getFirstPlayed());
-                s.sendMessage(
-                        Language.getMessage(
-                                example.getPlugin(), 
-                                uuid, 
-                                "path-in-yaml-language-file", 
-                                "I'm %name%, my IP is %ip%. I'm joined first time here at %firstjoin%. My Location is %world% X:%x% Y:%y% Z:%z%",
-                                new String[] {
-                                    "%name%",
-                                    "%ip%",
-                                    "%firstjoin%",
-                                    "%world%",
-                                    "%x%",
-                                    "%y%",
-                                    "%z%"
-                                },
-                                new String[] {
-                                    p.getName(), 
-                                    p.getAddress().getAddress().getHostAddress(), 
-                                    getDateTime(cal), 
-                                    p.getWorld().getName(), 
-                                    String.valueOf(p.getLocation().getBlockX()), 
-                                    String.valueOf(p.getLocation().getBlockY()), 
-                                    String.valueOf(p.getLocation().getBlockZ())
-                                }
-                        )
+                Language.sendMessage(
+                        example.getPlugin(), 
+                        p, 
+                        "path-in-yaml-language-file", 
+                        "I'm %name%, my IP is %ip%. I'm joined first time here at %firstjoin%. My Location is %world% X:%x% Y:%y% Z:%z%",
+                        new String[] {
+                            "%name%",
+                            "%ip%",
+                            "%firstjoin%",
+                            "%world%",
+                            "%x%",
+                            "%y%",
+                            "%z%"
+                        },
+                        new String[] {
+                            p.getName(), 
+                            p.getAddress().getAddress().getHostAddress(), 
+                            getDateTime(cal), 
+                            p.getWorld().getName(), 
+                            String.valueOf(p.getLocation().getBlockX()), 
+                            String.valueOf(p.getLocation().getBlockY()), 
+                            String.valueOf(p.getLocation().getBlockZ())
+                        }
                 );
                 return true;
             }

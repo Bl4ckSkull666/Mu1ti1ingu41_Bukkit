@@ -7,6 +7,7 @@ package de.bl4ckskull666.mu1ti1ingu41;
 
 import com.maxmind.geoip.LookupService;
 import de.bl4ckskull666.mu1ti1ingu41.utils.ResourceList;
+import de.bl4ckskull666.mu1ti1ingu41.utils.Utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -20,6 +21,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -180,7 +185,67 @@ public final class Language extends Mu1ti1ingu41 {
     }
     
     public static void sendMessage(Plugin plugin, Player p, String path, String defMsg, String[] search, String[] replace) {
-        p.sendMessage(getMessage(plugin, p.getUniqueId(), path, defMsg, search, replace));
+        try {
+            spigotMessage(plugin, p, path, defMsg, search, replace);
+        } catch(Exception ex) {
+            p.sendMessage(getMessage(plugin, p.getUniqueId(), path, defMsg, search, replace));
+        }
+    }
+    
+    private static void spigotMessage(Plugin plugin, Player p, String path, String defMsg, String[] search, String[] replace) {
+        if(!_languages.containsKey(plugin.getDescription().getName().toLowerCase())) {
+            p.spigot().sendMessage(new TextComponent("Error on get Message (31). Please Inform the Server Team."));
+            return;
+        }
+        
+        if(!UUIDLanguages._players.containsKey(p.getUniqueId()))
+            setPlayerLanguage(p.getUniqueId());
+        
+        if(!UUIDLanguages._players.containsKey(p.getUniqueId())) {
+            p.spigot().sendMessage(new TextComponent("Error on get Message (32). Please Inform the Server Team."));
+            return;
+        }
+        
+        if(!Mu1ti1ingu41.getPlugin().getConfig().isString("default-plugin-language." + plugin.getDescription().getName().toLowerCase())) {
+            p.spigot().sendMessage(new TextComponent("Error on get Message (33). Please Inform the Server Team."));
+            return;
+        }
+        
+        File f = _files.get(plugin.getDescription().getName().toLowerCase()).get(Mu1ti1ingu41.getPlugin().getConfig().getString("default-plugin-language." + plugin.getDescription().getName().toLowerCase()));
+        FileConfiguration fc = _languages.get(plugin.getDescription().getName().toLowerCase()).get(Mu1ti1ingu41.getPlugin().getConfig().getString("default-plugin-language." + plugin.getDescription().getName().toLowerCase()));
+        if(_languages.get(plugin.getDescription().getName().toLowerCase()).containsKey(UUIDLanguages._players.get(p.getUniqueId()))) {
+            f = _files.get(plugin.getDescription().getName().toLowerCase()).get(UUIDLanguages._players.get(p.getUniqueId()));
+            fc = _languages.get(plugin.getDescription().getName().toLowerCase()).get(UUIDLanguages._players.get(p.getUniqueId()));
+        }
+        
+        if(fc.isConfigurationSection(path) && fc.isString(path + ".message")) {
+            TextComponent msg = new TextComponent(searchAndReplace(fc.getString(path + ".message"), search, replace));
+            if(fc.isString(path + ".hover-msg")) {
+                msg.setHoverEvent(
+                    new HoverEvent(
+                        Utils.isHoverAction("show_" + fc.getString(path + ".hover-type", "text"))?HoverEvent.Action.valueOf(("show_" + fc.getString(path + ".hover-type", "text")).toUpperCase()):HoverEvent.Action.SHOW_TEXT, 
+                        new ComponentBuilder(searchAndReplace(fc.getString(path + ".hover-msg"), search, replace)).create()
+                    )
+                );
+            }
+            if(fc.isString(path + ".click-msg")) {
+                msg.setClickEvent(
+                    new ClickEvent(
+                        Utils.isClickAction(fc.getString(path + ".click-type", "open_url"))?ClickEvent.Action.valueOf(fc.getString(path + ".click-type", "open_url").toUpperCase()):ClickEvent.Action.OPEN_URL, 
+                        searchAndReplace(fc.getString(path + ".click-msg"), search, replace)
+                    )
+                );
+            }
+            p.spigot().sendMessage(new TextComponent(msg));
+            return;
+        }
+            
+        if(fc.getString(path, "").isEmpty()) {
+            saveMissingPath(f, fc, path, defMsg);
+            p.spigot().sendMessage(new TextComponent(searchAndReplace(defMsg, search, replace)));
+            return;
+        }
+        p.spigot().sendMessage(new TextComponent(searchAndReplace(fc.getString(path), search, replace)));
     }
     
     private static void saveMissingPath(File f, FileConfiguration fc, String path, String defMsg) {
@@ -293,5 +358,13 @@ public final class Language extends Mu1ti1ingu41 {
     
     public static HashMap<String, HashMap<String, File>> getFileList() {
         return _files;
+    }
+    
+    private static String searchAndReplace(String msg, String[] search, String[] replace) {
+        if(search.length > 0 && search.length == replace.length) {
+            for(int i = 0; i < search.length; i++)
+                msg = msg.replaceAll(search[i], replace[i]);
+        }
+        return net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', msg);
     }
 }

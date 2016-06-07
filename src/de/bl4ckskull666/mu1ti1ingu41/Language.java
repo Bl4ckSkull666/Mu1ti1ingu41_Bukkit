@@ -79,8 +79,8 @@ public final class Language extends Mu1ti1ingu41 {
     
     private static void addFileToPlugin(File f, String plugin) {
         if(!_files.containsKey(plugin)) {
-            _files.put(plugin, new HashMap<String, File>());
-            _languages.put(plugin, new HashMap<String, FileConfiguration>());
+            _files.put(plugin, new HashMap<>());
+            _languages.put(plugin, new HashMap<>());
         }
         
         String name = f.getName();
@@ -114,6 +114,7 @@ public final class Language extends Mu1ti1ingu41 {
         return fc;
     }
     
+    @Deprecated
     public static String[] getMessages(Plugin plugin, UUID uuid, String path) {
         if(!_languages.containsKey(plugin.getDescription().getName().toLowerCase()))
             return new String[] {"Error on get Messages (11). Please Inform the Server Team."};
@@ -139,10 +140,12 @@ public final class Language extends Mu1ti1ingu41 {
         return (String[])fc.getStringList(path).toArray();
     }
     
+    @Deprecated
     public static String getMessage(Plugin plugin, UUID uuid, String path, String defMsg) {
         return getMessage(plugin, uuid, path, defMsg, new String[] {}, new String[] {});
     }
     
+    @Deprecated
     public static String getMessage(Plugin plugin, UUID uuid, String path, String defMsg, String[] search, String[] replace) {
         if(!_languages.containsKey(plugin.getDescription().getName().toLowerCase()))
             return "Error on get Message (01). Please Inform the Server Team.";
@@ -180,21 +183,120 @@ public final class Language extends Mu1ti1ingu41 {
         return ChatColor.translateAlternateColorCodes('&', msg);
     }
     
-    public static void sendMessage(Plugin plugin, Player p, String path, String defMsg) {
-        p.sendMessage(getMessage(plugin, p.getUniqueId(), path, defMsg));
+    public static String getPlainText(Plugin plugin, UUID uuid, String path, String def) {
+        return getPlainText(plugin, uuid, path, def, new String[] {}, new String[] {});
     }
     
-    public static void sendMessage(Plugin plugin, Player p, String path, String defMsg, String[] search, String[] replace) {
-        try {
-            spigotMessage(plugin, p, path, defMsg, search, replace);
-        } catch(Exception ex) {
-            p.sendMessage(getMessage(plugin, p.getUniqueId(), path, defMsg, search, replace));
+    public static String getPlainText(Plugin plugin, UUID uuid, String path, String def, String[] search, String[] replace) {
+        if(!_languages.containsKey(plugin.getDescription().getName().toLowerCase()))
+            return ChatColor.WHITE + "[" + ChatColor.RED + "Error (01)" + ChatColor.WHITE + "]" + ChatColor.RESET + getDefMessage(null, null, path, def, search, replace);
+        
+        if(!UUIDLanguages._players.containsKey(uuid))
+            setPlayerLanguage(uuid);
+        
+        if(!UUIDLanguages._players.containsKey(uuid))
+            return ChatColor.WHITE + "[" + ChatColor.RED + "Error (02)" + ChatColor.WHITE + "]" + ChatColor.RESET + getDefMessage(null, null, path, def, search, replace);
+        
+        if(!Mu1ti1ingu41.getPlugin().getConfig().isString("default-plugin-language." + plugin.getDescription().getName().toLowerCase()))
+            return ChatColor.WHITE + "[" + ChatColor.RED + "Error (03)" + ChatColor.WHITE + "]" + ChatColor.RESET + getDefMessage(null, null, path, def, search, replace);
+        
+        File f = _files.get(plugin.getDescription().getName().toLowerCase()).get(Mu1ti1ingu41.getPlugin().getConfig().getString("default-plugin-language." + plugin.getDescription().getName().toLowerCase()));
+        FileConfiguration fc = _languages.get(plugin.getDescription().getName().toLowerCase()).get(Mu1ti1ingu41.getPlugin().getConfig().getString("default-plugin-language." + plugin.getDescription().getName().toLowerCase()));
+        if(_languages.get(plugin.getDescription().getName().toLowerCase()).containsKey(UUIDLanguages._players.get(uuid))) {
+            f = _files.get(plugin.getDescription().getName().toLowerCase()).get(UUIDLanguages._players.get(uuid));
+            fc = _languages.get(plugin.getDescription().getName().toLowerCase()).get(UUIDLanguages._players.get(uuid));
         }
+          
+        if(!fc.isString(path) && !fc.isString(path + ".message"))
+            return getDefMessage(f, fc, path, def, search, replace);
+        
+        String msg = fc.isString(path)?fc.getString(path):fc.getString(path + ".message");
+        if(search.length > 0 && search.length == replace.length) {
+            for(int i = 0; i < search.length; i++)
+                msg = msg.replaceAll(search[i], replace[i]);
+        }
+        return ChatColor.translateAlternateColorCodes('&', msg);
     }
     
-    private static void spigotMessage(Plugin plugin, Player p, String path, String defMsg, String[] search, String[] replace) {
+    public static String getText(Plugin plugin, UUID uuid, String path, String def) {
+        return getText(plugin, uuid, path, def, new String[] {}, new String[] {});
+    }
+    
+    public static String getText(Plugin plugin, UUID uuid, String path, String def, String[] search, String[] replace) {
+        if(!_languages.containsKey(plugin.getDescription().getName().toLowerCase()))
+            return ChatColor.WHITE + "[" + ChatColor.RED + "Error (01)" + ChatColor.WHITE + "]" + ChatColor.RESET + getDefMessage(null, null, path, def, search, replace);
+        
+        if(!UUIDLanguages._players.containsKey(uuid))
+            setPlayerLanguage(uuid);
+        
+        if(!UUIDLanguages._players.containsKey(uuid))
+            return ChatColor.WHITE + "[" + ChatColor.RED + "Error (02)" + ChatColor.WHITE + "]" + ChatColor.RESET + getDefMessage(null, null, path, def, search, replace);
+        
+        if(!Mu1ti1ingu41.getPlugin().getConfig().isString("default-plugin-language." + plugin.getDescription().getName().toLowerCase()))
+            return ChatColor.WHITE + "[" + ChatColor.RED + "Error (03)" + ChatColor.WHITE + "]" + ChatColor.RESET + getDefMessage(null, null, path, def, search, replace);
+        
+        File f = _files.get(plugin.getDescription().getName().toLowerCase()).get(Mu1ti1ingu41.getPlugin().getConfig().getString("default-plugin-language." + plugin.getDescription().getName().toLowerCase()));
+        FileConfiguration fc = _languages.get(plugin.getDescription().getName().toLowerCase()).get(Mu1ti1ingu41.getPlugin().getConfig().getString("default-plugin-language." + plugin.getDescription().getName().toLowerCase()));
+        if(_languages.get(plugin.getDescription().getName().toLowerCase()).containsKey(UUIDLanguages._players.get(uuid))) {
+            f = _files.get(plugin.getDescription().getName().toLowerCase()).get(UUIDLanguages._players.get(uuid));
+            fc = _languages.get(plugin.getDescription().getName().toLowerCase()).get(UUIDLanguages._players.get(uuid));
+        }
+          
+        String msg = "";
+        if(Mu1ti1ingu41.getFirstPrefix()) {
+            if(plugin.getConfig().getBoolean("use-prefix", false) && fc.isString("prefix"))
+                msg += ChatColor.translateAlternateColorCodes('&', fc.getString("prefix"));
+            if(plugin.getConfig().getBoolean("use-time-prefix", false))
+                msg += Utils.getDateTime(uuid);
+        } else {
+            if(plugin.getConfig().getBoolean("use-time-prefix", false))
+                msg += Utils.getDateTime(uuid);
+            if(plugin.getConfig().getBoolean("use-prefix", false) && fc.isString("prefix"))
+                msg += ChatColor.translateAlternateColorCodes('&', fc.getString("prefix"));
+        }
+        
+        if(!fc.isString(path) && !fc.isString(path + ".message"))
+            return msg + getDefMessage(f, fc, path, def, search, replace);
+        
+        msg += fc.isString(path)?fc.getString(path):fc.getString(path + ".message");
+        if(search.length > 0 && search.length == replace.length) {
+            for(int i = 0; i < search.length; i++)
+                msg = msg.replaceAll(search[i], replace[i]);
+        }
+        return ChatColor.translateAlternateColorCodes('&', msg);
+    }
+    
+    private static String getDefMessage(File f, FileConfiguration fc, String path, String def, String[] s, String[] r) {
+        if(f != null && fc != null) {
+            try {
+                fc.set(path, def);
+                fc.save(f);
+            } catch(IOException ex) {
+                Mu1ti1ingu41.getPlugin().getLogger().log(Level.INFO, "Error on save missing path " + path + " in " + f.getName() + ".", ex);
+            }
+        }
+        
+        if(s.length > 0 && s.length == r.length) {
+            for(int i = 0; i < s.length; i++)
+                def = def.replaceAll(s[i], r[i]);
+        }
+        return ChatColor.translateAlternateColorCodes('&', def);
+    }
+    
+    public static void sendMessage(Plugin plugin, Player p, String path, String def) {
+        sendMessage(plugin, p, path, def, new String [] {}, new String [] {});
+    }
+    
+    public static void sendMessage(Plugin plugin, Player p, String path, String def, String[] search, String[] replace) {
+        if(Mu1ti1ingu41.isSpigot())
+            spigotMessage(plugin, p, path, def, search, replace);
+        else
+            p.sendMessage(getText(plugin, p.getUniqueId(), path, def, search, replace));
+    }
+    
+    private static void spigotMessage(Plugin plugin, Player p, String path, String def, String[] search, String[] replace) {
         if(!_languages.containsKey(plugin.getDescription().getName().toLowerCase())) {
-            p.spigot().sendMessage(new TextComponent("Error on get Message (31). Please Inform the Server Team."));
+            p.spigot().sendMessage(new TextComponent(ChatColor.WHITE + "[" + ChatColor.RED + "Error (11)" + ChatColor.WHITE + "]" + ChatColor.RESET + getDefMessage(null, null, path, def, search, replace)));
             return;
         }
         
@@ -202,12 +304,12 @@ public final class Language extends Mu1ti1ingu41 {
             setPlayerLanguage(p.getUniqueId());
         
         if(!UUIDLanguages._players.containsKey(p.getUniqueId())) {
-            p.spigot().sendMessage(new TextComponent("Error on get Message (32). Please Inform the Server Team."));
+            p.spigot().sendMessage(new TextComponent(ChatColor.WHITE + "[" + ChatColor.RED + "Error (12)" + ChatColor.WHITE + "]" + ChatColor.RESET + getDefMessage(null, null, path, def, search, replace)));
             return;
         }
         
         if(!Mu1ti1ingu41.getPlugin().getConfig().isString("default-plugin-language." + plugin.getDescription().getName().toLowerCase())) {
-            p.spigot().sendMessage(new TextComponent("Error on get Message (33). Please Inform the Server Team."));
+            p.spigot().sendMessage(new TextComponent(ChatColor.WHITE + "[" + ChatColor.RED + "Error (13)" + ChatColor.WHITE + "]" + ChatColor.RESET + getDefMessage(null, null, path, def, search, replace)));
             return;
         }
         
@@ -218,10 +320,23 @@ public final class Language extends Mu1ti1ingu41 {
             fc = _languages.get(plugin.getDescription().getName().toLowerCase()).get(UUIDLanguages._players.get(p.getUniqueId()));
         }
         
+        TextComponent msg = new TextComponent("");
+        if(Mu1ti1ingu41.getFirstPrefix()) {
+            if(plugin.getConfig().getBoolean("use-prefix", false) && fc.isString("prefix"))
+                msg.addExtra(ChatColor.translateAlternateColorCodes('&', fc.getString("prefix")));
+            if(plugin.getConfig().getBoolean("use-time-prefix", false))
+                msg.addExtra(Utils.getDateTime(p.getUniqueId()));
+        } else {
+            if(plugin.getConfig().getBoolean("use-time-prefix", false))
+                msg.addExtra(Utils.getDateTime(p.getUniqueId()));
+            if(plugin.getConfig().getBoolean("use-prefix", false) && fc.isString("prefix"))
+                msg.addExtra(ChatColor.translateAlternateColorCodes('&', fc.getString("prefix")));
+        }
+        
         if(fc.isConfigurationSection(path) && fc.isString(path + ".message")) {
-            TextComponent msg = new TextComponent(searchAndReplace(fc.getString(path + ".message"), search, replace));
+            TextComponent tmp = new TextComponent(searchAndReplace(fc.getString(path + ".message"), search, replace));
             if(fc.isString(path + ".hover-msg")) {
-                msg.setHoverEvent(
+                tmp.setHoverEvent(
                     new HoverEvent(
                         Utils.isHoverAction("show_" + fc.getString(path + ".hover-type", "text"))?HoverEvent.Action.valueOf(("show_" + fc.getString(path + ".hover-type", "text")).toUpperCase()):HoverEvent.Action.SHOW_TEXT, 
                         new ComponentBuilder(searchAndReplace(fc.getString(path + ".hover-msg"), search, replace)).create()
@@ -229,23 +344,61 @@ public final class Language extends Mu1ti1ingu41 {
                 );
             }
             if(fc.isString(path + ".click-msg")) {
-                msg.setClickEvent(
+                tmp.setClickEvent(
                     new ClickEvent(
                         Utils.isClickAction(fc.getString(path + ".click-type", "open_url"))?ClickEvent.Action.valueOf(fc.getString(path + ".click-type", "open_url").toUpperCase()):ClickEvent.Action.OPEN_URL, 
                         searchAndReplace(fc.getString(path + ".click-msg"), search, replace)
                     )
                 );
             }
-            p.spigot().sendMessage(new TextComponent(msg));
+            msg.addExtra(tmp);
+            p.spigot().sendMessage(msg);
             return;
         }
             
-        if(fc.getString(path, "").isEmpty()) {
-            saveMissingPath(f, fc, path, defMsg);
-            p.spigot().sendMessage(new TextComponent(searchAndReplace(defMsg, search, replace)));
+        if(!fc.isString(path)) {
+            msg.addExtra(Language.getDefMessage(f, fc, path, def, search, search));
+            p.spigot().sendMessage(msg);
             return;
         }
-        p.spigot().sendMessage(new TextComponent(searchAndReplace(fc.getString(path), search, replace)));
+        
+        msg.addExtra(searchAndReplace(fc.getString(path), search, replace));
+        p.spigot().sendMessage(msg);
+    }
+    
+    public static String getMu1ti1ingu41Text(UUID uuid, String path, String def) {
+        return getMu1ti1ingu41Text(uuid, path, def, new String[] {}, new String[] {});
+    }
+    
+    public static String getMu1ti1ingu41Text(UUID uuid, String path, String def, String[] search, String[] replace) {
+        if(!_languages.containsKey(Mu1ti1ingu41.name().toLowerCase()))
+            return "";
+        
+        if(!UUIDLanguages._players.containsKey(uuid))
+            setPlayerLanguage(uuid);
+        
+        if(!UUIDLanguages._players.containsKey(uuid))
+            return "";
+        
+        if(!Mu1ti1ingu41.getPlugin().getConfig().isString("default-plugin-language." + Mu1ti1ingu41.name().toLowerCase()))
+            return "";
+        
+        File f = _files.get(Mu1ti1ingu41.name().toLowerCase()).get(Mu1ti1ingu41.getPlugin().getConfig().getString("default-plugin-language." + Mu1ti1ingu41.name().toLowerCase()));
+        FileConfiguration fc = _languages.get(Mu1ti1ingu41.name().toLowerCase()).get(Mu1ti1ingu41.getPlugin().getConfig().getString("default-plugin-language." + Mu1ti1ingu41.name().toLowerCase()));
+        if(_languages.get(Mu1ti1ingu41.name().toLowerCase()).containsKey(UUIDLanguages._players.get(uuid))) {
+            f = _files.get(Mu1ti1ingu41.name().toLowerCase()).get(UUIDLanguages._players.get(uuid));
+            fc = _languages.get(Mu1ti1ingu41.name().toLowerCase()).get(UUIDLanguages._players.get(uuid));
+        }
+        
+        if(!fc.isString(path))
+            return Language.getDefMessage(f, fc, path, def, search, search);
+        
+        String msg = fc.getString(path);
+        if(search.length > 0 && search.length == replace.length) {
+            for(int i = 0; i < search.length; i++)
+                msg = msg.replaceAll(search[i], replace[i]);
+        }
+        return ChatColor.translateAlternateColorCodes('&', msg);
     }
     
     private static void saveMissingPath(File f, FileConfiguration fc, String path, String defMsg) {
@@ -365,6 +518,6 @@ public final class Language extends Mu1ti1ingu41 {
             for(int i = 0; i < search.length; i++)
                 msg = msg.replaceAll(search[i], replace[i]);
         }
-        return net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', msg);
+        return ChatColor.translateAlternateColorCodes('&', msg);
     }
 }

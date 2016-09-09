@@ -27,7 +27,7 @@ public class PlayerJoin implements Listener {
         if(!(Mu1ti1ingu41.getPlugin().getConfig().getBoolean("use-bungeecord", false) && Bukkit.getVersion().toLowerCase().contains("spigot"))) {
             if(!UUIDLanguages._players.containsKey(e.getPlayer().getUniqueId())) {
                 Language.setPlayerLanguage(e.getPlayer().getUniqueId());
-                e.getPlayer().sendMessage(Language.getMessage(Mu1ti1ingu41.getPlugin(),
+                e.getPlayer().sendMessage(Language.getText(Mu1ti1ingu41.getPlugin(),
                                 e.getPlayer().getUniqueId(),
                                 "auto-language",
                                 "Set your language to %language%",

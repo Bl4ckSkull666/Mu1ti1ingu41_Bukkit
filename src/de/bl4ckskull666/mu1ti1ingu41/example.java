@@ -41,7 +41,7 @@ public class example extends JavaPlugin implements CommandExecutor {
         
         //But this can be used only by player now.
         if(!(s instanceof Player)) {
-            s.sendMessage(Language.getMessage(_plugin, uuid, "need-player", "This command must be execute by a Player."));
+            s.sendMessage(Language.getText(_plugin, uuid, "need-player", "This command must be execute by a Player."));
             return true;
         }
         
@@ -78,7 +78,7 @@ public class example extends JavaPlugin implements CommandExecutor {
                 return true;
             }
         }
-        s.sendMessage(Language.getMessage(example.getPlugin(), uuid, "path-in-yaml-language-file" , "This command is only for insider. And you seem to be an outsider. Good Bye ;-)"));
+        s.sendMessage(Language.getText(example.getPlugin(), uuid, "path-in-yaml-language-file" , "This command is only for insider. And you seem to be an outsider. Good Bye ;-)"));
         return true;
     }
     
